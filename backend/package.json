@@ -1,0 +1,25 @@
+{
+  "name": "inventory-system-backend",
+  "version": "1.0.0",
+  "description": "Product Inventory Management System - backend API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "psql -d $npm_package_config_dbname -f db/migrations/001_init_schema.sql",
+    "seed": "psql -d $npm_package_config_dbname -f db/seed/seed.sql",
+    "test:manual": "node test-manual/test-categories.js && node test-manual/test-suppliers.js && node test-manual/test-products.js && node test-manual/test-stock-movements.js"
+  },
+  "config": {
+    "dbname": "inventory_db"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "pg": "^8.22.0"
+  }
+}
