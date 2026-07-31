@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in · Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="sidebar-brand" style="margin-bottom: 28px;">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      </div>
+      <span class="brand-name" style="color: var(--text);">Inventory</span>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Log in</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
+    </div>
+
+    <div id="auth-error"></div>
+
+    <!-- Login form -->
+    <form id="login-form">
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <div class="password-field">
+          <input type="password" id="login-password" required autocomplete="current-password">
+          <button type="button" class="password-toggle" onclick="togglePassword('login-password', this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Log in</button>
+      <p class="auth-hint">
+        Demo accounts — Admin: <code>admin@inventory.com</code> / <code>admin123</code><br>
+        Staff: <code>staff@inventory.com</code> / <code>staff123</code>
+      </p>
+    </form>
+
+    <!-- Signup form -->
+    <form id="signup-form" style="display:none;">
+      <div class="form-group">
+        <label for="signup-name">Full name</label>
+        <input type="text" id="signup-name" required autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <div class="password-field">
+          <input type="password" id="signup-password" required minlength="6" autocomplete="new-password">
+          <button type="button" class="password-toggle" onclick="togglePassword('signup-password', this)" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+        <div class="hint">At least 6 characters. New accounts are created with the "staff" role.</div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Create account</button>
+    </form>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script src="common.js"></script>
+<script src="login.js"></script>
+</body>
+</html>

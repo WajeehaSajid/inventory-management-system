@@ -2,6 +2,7 @@ const express = require('express');
 const { body, param, query, validationResult } = require('express-validator');
 const pool = require('../db/pool');
 const AppError = require('../middleware/AppError');
+const { requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -202,6 +203,7 @@ router.put(
 // -----------------------------------------------------
 router.delete(
   '/:id',
+  requireRole('admin'),
   [param('id').isInt().withMessage('must be an integer')],
   async (req, res, next) => {
     try {

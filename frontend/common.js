@@ -173,41 +173,8 @@ function initSplash() {
 
 document.addEventListener('DOMContentLoaded', initSplash);
 
-// -----------------------------------------------------
-// Editable profile name — click the sidebar name or either
-// avatar to rename; stored in localStorage so it's remembered
-// per-browser, and every avatar updates to match the initial.
-// -----------------------------------------------------
-function initProfile() {
-  const stored = localStorage.getItem('profileName') || 'User';
-  applyProfileName(stored);
-
-  const nameEl = document.querySelector('.sidebar-profile .who .name');
-  const targets = [nameEl, ...document.querySelectorAll('.sidebar-profile, .topbar-avatar')];
-
-  targets.forEach((el) => {
-    if (!el) return;
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const next = prompt('Your display name:', localStorage.getItem('profileName') || 'User');
-      if (next && next.trim()) {
-        localStorage.setItem('profileName', next.trim());
-        applyProfileName(next.trim());
-      }
-    });
-  });
-}
-
-function applyProfileName(name) {
-  const initial = name.trim().charAt(0).toUpperCase() || 'U';
-  const nameEl = document.querySelector('.sidebar-profile .who .name');
-  if (nameEl) nameEl.textContent = name;
-  document.querySelectorAll('.sidebar-profile .avatar, .topbar-avatar').forEach((el) => {
-    el.textContent = initial;
-  });
-}
-
-document.addEventListener('DOMContentLoaded', initProfile);
+// Profile display (name, role, avatar initials) is now driven by the
+// real logged-in user — see renderSidebarProfile() in auth.js.
 
 // Builds the "< 1 2 3 ... 12 >" numbered pagination bar used on every
 // list page. `pagination` is the { page, pageSize, total, totalPages }

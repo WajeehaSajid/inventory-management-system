@@ -9,10 +9,25 @@
 const API_BASE = 'https://inventory-management-system-omega-livid.vercel.app/api';
 
 async function apiRequest(path, options = {}) {
+  const token = localStorage.getItem('authToken');
+
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     ...options,
   });
+
+  // Session expired or missing — send the user back to log in.
+  if (res.status === 401) {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authUser');
+    if (!location.pathname.endsWith('login.html')) {
+      location.href = 'login.html';
+    }
+    throw new Error('Session expired. Please log in again.');
+  }
 
   // 204 No Content (e.g. successful DELETE) has no body to parse.
   if (res.status === 204) return null;

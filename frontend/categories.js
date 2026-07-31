@@ -39,7 +39,7 @@ function renderTable(categories) {
       <td class="actions-cell">
         <div class="actions-inner">
           <button class="btn btn-sm" onclick="openCategoryForm(${c.id})">Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="confirmDeleteCategory(${c.id}, '${escapeHtml(c.name)}')">Delete</button>
+          ${isAdmin() ? `<button class="btn btn-sm btn-danger" onclick="confirmDeleteCategory(${c.id}, '${escapeHtml(c.name)}')">Delete</button>` : ''}
         </div>
       </td>
     </tr>

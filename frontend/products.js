@@ -125,7 +125,7 @@ function renderTable(products) {
         <div class="actions-inner">
           <button class="btn btn-sm" onclick="openStockMovementForm(${p.id}, '${escapeHtml(p.name)}', ${p.quantity_in_stock})">Adjust stock</button>
           <button class="btn btn-sm" onclick="openProductForm(${p.id})">Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="confirmDeleteProduct(${p.id}, '${escapeHtml(p.name)}')">Delete</button>
+          ${isAdmin() ? `<button class="btn btn-sm btn-danger" onclick="confirmDeleteProduct(${p.id}, '${escapeHtml(p.name)}')">Delete</button>` : ''}
         </div>
       </td>
     </tr>

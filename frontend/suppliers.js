@@ -41,7 +41,7 @@ function renderTable(suppliers) {
       <td class="actions-cell">
         <div class="actions-inner">
           <button class="btn btn-sm" onclick="openSupplierForm(${s.id})">Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="confirmDeleteSupplier(${s.id}, '${escapeHtml(s.name)}')">Delete</button>
+          ${isAdmin() ? `<button class="btn btn-sm btn-danger" onclick="confirmDeleteSupplier(${s.id}, '${escapeHtml(s.name)}')">Delete</button>` : ''}
         </div>
       </td>
     </tr>

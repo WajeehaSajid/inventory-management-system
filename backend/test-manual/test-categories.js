@@ -10,6 +10,22 @@ const BASE = `http://localhost:${PORT}/api/categories`;
 
 async function run() {
   const server = app.listen(PORT);
+  // Log in as admin and auto-attach the token to every fetch call made
+  // for the rest of this script (so we do not have to edit every
+  // individual request below).
+  const loginRes = await fetch(`http://localhost:${PORT}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'admin@inventory.com', password: 'admin123' }),
+  });
+  const { data: loginData } = await loginRes.json();
+  const authToken = loginData.token;
+  const rawFetch = global.fetch;
+  global.fetch = (url, options = {}) => rawFetch(url, {
+    ...options,
+    headers: { ...(options.headers || {}), Authorization: `Bearer ${authToken}` },
+  });
+
 
   const log = (label, res, body) => {
     console.log(`\n=== ${label} (status ${res.status}) ===`);
