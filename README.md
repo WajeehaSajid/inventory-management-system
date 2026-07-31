@@ -4,6 +4,15 @@ A full-stack CRUD web application for managing products, categories, suppliers, 
 
 ---
 
+## Live Demo
+- **Frontend:** https://inventory-management-system-enus.vercel.app/
+- **Backend API:** https://inventory-management-system-omega-livid.vercel.app/api
+- **Database:** Neon (managed cloud PostgreSQL)
+
+No login required — the app is open and seeded with sample data.
+
+---
+
 ## Tech Stack & Reasoning
 
 | Layer | Choice | Why |
@@ -53,6 +62,8 @@ inventory-system/
 ---
 
 ## Setup
+
+> These steps are for running the project locally. A live version is already deployed — see the Live Demo section above.
 
 ### Prerequisites
 - Node.js 18+ (uses the built-in `fetch` API in test scripts)
@@ -185,7 +196,8 @@ All responses are JSON. All errors follow the shape:
 
 ## Stretch Goals Completed
 - **UX polish**: debounced search input, custom-styled dropdowns, an intro splash animation, and a small summary dashboard (total / in-stock / low-stock / out-of-stock counts) on the Products page.
-- The remaining optional stretch goals (authentication, full analytics dashboard, CSV export/import, automated test suite, Docker, live deployment) were not implemented — priority was making the core CRUD, search/filter/pagination, and stock-movement requirements fully correct and well-tested first.
+- **Live deployment**: frontend and backend deployed separately on Vercel, backed by a managed Postgres database on Neon (see Live Demo section above for links).
+- The remaining optional stretch goals (authentication, full analytics dashboard, CSV export/import, automated test suite, Docker) were not implemented — priority was making the core CRUD, search/filter/pagination, and stock-movement requirements fully correct and well-tested first.
 
 ## Known Limitations
 - No automated test suite (Jest/Mocha) — verified instead via manual smoke-test scripts (see Testing section above).
