@@ -6,7 +6,7 @@
 //    returns our { error: { code, message } } shape, so callers
 //    can just try/catch and show err.message to the user.
 
-const API_BASE = 'http://localhost:4000/api';
+const API_BASE = 'https://inventory-management-system-omega-livid.vercel.app/api';
 
 async function apiRequest(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
