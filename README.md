@@ -4,15 +4,6 @@ A full-stack CRUD web application for managing products, categories, suppliers, 
 
 ---
 
-## Live Demo
-- **Frontend:** https://inventory-management-system-enus.vercel.app/
-- **Backend API:** https://inventory-management-system-omega-livid.vercel.app/api
-- **Database:** Neon (managed cloud PostgreSQL)
-
-No login required — the app is open and seeded with sample data.
-
----
-
 ## Tech Stack & Reasoning
 
 | Layer | Choice | Why |
@@ -62,8 +53,6 @@ inventory-system/
 ---
 
 ## Setup
-
-> These steps are for running the project locally. A live version is already deployed — see the Live Demo section above.
 
 ### Prerequisites
 - Node.js 18+ (uses the built-in `fetch` API in test scripts)
@@ -115,31 +104,69 @@ python3 -m http.server 8080
 ```
 Then open `http://localhost:8080/index.html` in your browser.
 
-> Note: `frontend/api.js` points to `http://localhost:4000/api` by default. Update `API_BASE` in that file if your backend runs elsewhere.
+> `frontend/api.js` automatically points at `http://localhost:4000/api` when the page is opened from `localhost`, and at the deployed backend URL otherwise — no manual editing needed.
+
+---
+
+## Option B: Run everything with Docker
+
+Instead of steps 1–6 above, with [Docker](https://www.docker.com/) installed you can start the database, backend, and frontend together with one command from the project root:
+
+```bash
+docker compose up --build
+```
+
+This will:
+- Start a PostgreSQL container and automatically run the schema migrations and seed data on first startup (nothing to run manually)
+- Build and start the backend API on `http://localhost:4000`
+- Serve the frontend (via nginx) on `http://localhost:8080`
+
+Default login credentials (from the seed data) are the same as in the Setup section below — see `db/seed/seed_users.sql`.
+
+To stop everything: `Ctrl+C`, then `docker compose down` (add `-v` to also wipe the database volume and start fresh next time).
 
 ---
 
 ## Testing
 
-Automated unit tests were not included as part of the core scope; instead, each route was verified with **self-contained smoke-test scripts** in `backend/test-manual/`. Each script boots the Express app on a dedicated test port, fires a sequence of real HTTP requests covering the happy path *and* the documented edge cases (validation errors, duplicate SKUs, delete-protection, insufficient stock, etc.), and prints the results.
-
-Run them (with the database seeded, per Setup above):
+**Automated tests (Jest + Supertest)** — 38 tests across 6 suites covering auth, all CRUD routes, validation, delete-protection, role-based permissions, atomic stock movements, and dashboard analytics. Run with the database seeded (per Setup above):
 ```bash
 cd backend
+npm test
+```
+
+**Manual smoke-test scripts** in `backend/test-manual/` were also kept — each boots the Express app on a dedicated port and walks through a sequence of real requests with printed output, useful for eyeballing exact responses during development:
+```bash
 node test-manual/test-categories.js
 node test-manual/test-suppliers.js
 node test-manual/test-products.js
 node test-manual/test-stock-movements.js
+node test-manual/test-auth.js
+node test-manual/test-dashboard.js
+node test-manual/test-csv.js
 ```
 
 ---
 
 ## API Reference
 
+Full interactive documentation (Swagger UI) is available at `/api-docs` once the backend is running (e.g. `http://localhost:4000/api-docs`), including a "try it out" mode with authentication support. The raw OpenAPI spec is at `/api-docs.json`. Summary below:
+
 All responses are JSON. All errors follow the shape:
 ```json
 { "error": { "code": "VALIDATION_ERROR", "message": "..." } }
 ```
+
+Except `/api/health` and `/api/auth/*`, every endpoint below requires a `Authorization: Bearer <token>` header (obtained from `/api/auth/login`).
+
+### Auth
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Sign up — `{ name, email, password }`. Always creates a `staff` account. |
+| POST | `/api/auth/login` | Log in — `{ email, password }` → `{ user, token }` |
+| GET | `/api/auth/me` | Returns the currently authenticated user |
+
+Default seeded accounts (see `db/seed/seed_users.sql`): `admin@inventory.com` / `admin123` and `staff@inventory.com` / `staff123`.
 
 ### Categories
 | Method | Endpoint | Description |
@@ -169,12 +196,22 @@ All responses are JSON. All errors follow the shape:
 | DELETE | `/api/products/:id` | Delete (also removes its stock movement history via `ON DELETE CASCADE`) |
 | POST | `/api/products/:id/stock-movements` | Record a movement — `{ type: "IN"\|"OUT", quantity, reason }`. Atomically updates `quantity_in_stock`. |
 | GET | `/api/products/:id/stock-movements` | Movement history for a product, most recent first |
+| GET | `/api/products/export` | Download all products as a CSV file |
+| POST | `/api/products/import` | Bulk create/update products from an uploaded CSV (**admin only**) — matches existing rows by SKU |
 
 **Query params for `GET /api/products`:**
 - `search` — matches `name` or `sku`, case-insensitive, partial match
 - `category` — filter by `category_id`
 - `supplier` — filter by `supplier_id`
 - `status` — one of `in_stock` (≥10), `low_stock` (1–9), `out_of_stock` (0)
+
+### Dashboard
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/dashboard/summary` | Product/category/supplier counts, stock status breakdown, total inventory value |
+| GET | `/api/dashboard/stock-trend?days=7` | Daily IN vs OUT totals, for a trend chart |
+| GET | `/api/dashboard/category-breakdown` | Product count per category, for a pie chart |
+| GET | `/api/dashboard/top-products?limit=5` | Highest inventory-value products |
 
 ---
 
@@ -195,12 +232,17 @@ All responses are JSON. All errors follow the shape:
 ---
 
 ## Stretch Goals Completed
-- **UX polish**: debounced search input, custom-styled dropdowns, an intro splash animation, and a small summary dashboard (total / in-stock / low-stock / out-of-stock counts) on the Products page.
+- **Authentication**: JWT-based login/signup, with Admin and Staff roles. Staff can view/create/edit; Delete is restricted to Admins (enforced server-side, not just hidden in the UI).
+- **Analytics dashboard**: summary stats, a stock-movement trend chart, category breakdown, and top products by inventory value — backed by dedicated `/api/dashboard/*` endpoints.
+- **CSV export/import**: download the full product catalog as CSV, or bulk-create/update products from an uploaded CSV (admin-only), with per-row validation and a created/updated/errors summary.
+- **API documentation**: interactive Swagger UI at `/api-docs`, plus a raw OpenAPI 3.0 spec at `/api-docs.json` (importable into Postman).
+- **Automated tests**: 38 Jest + Supertest tests across 6 suites (see Testing section).
+- **Docker**: `docker compose up` starts the database (auto-migrated and seeded), backend, and frontend together.
 - **Live deployment**: frontend and backend deployed separately on Vercel, backed by a managed Postgres database on Neon (see Live Demo section above for links).
-- The remaining optional stretch goals (authentication, full analytics dashboard, CSV export/import, automated test suite, Docker) were not implemented — priority was making the core CRUD, search/filter/pagination, and stock-movement requirements fully correct and well-tested first.
+- **UX polish**: debounced search input, custom-styled dropdowns, an intro splash animation, and a light/dark theme toggle.
 
 ## Known Limitations
-- No automated test suite (Jest/Mocha) — verified instead via manual smoke-test scripts (see Testing section above).
-- No authentication — all endpoints are open, as auth was a stretch goal, not a core requirement.
-- Frontend does not debounce category/supplier filter dropdowns (not needed — only the free-text search is debounced).
-- No live deployment; this submission runs locally per the Setup instructions above.
+- The deployed (Vercel) frontend and the Docker/local setup use different backend URLs — `frontend/api.js` switches between them automatically based on hostname, so no manual edit is needed either way.
+- CSV import matches categories/suppliers by exact name; it doesn't auto-create a new category/supplier if the name doesn't match — this is a deliberate choice to avoid silently creating typo'd categories, but it does mean the category/supplier must already exist before importing.
+- No automated end-to-end (browser) tests — Jest/Supertest cover the API layer; the frontend was verified manually.
+
