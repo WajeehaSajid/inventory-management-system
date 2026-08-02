@@ -47,6 +47,93 @@ async function init() {
   });
 
   document.getElementById('btn-add-product').addEventListener('click', () => openProductForm());
+
+  document.getElementById('btn-export-csv').addEventListener('click', exportCsv);
+
+  const importBtn = document.getElementById('btn-import-csv');
+  if (isAdmin()) {
+    importBtn.addEventListener('click', () => document.getElementById('csv-file-input').click());
+    document.getElementById('csv-file-input').addEventListener('change', handleCsvImport);
+  } else {
+    // Import is admin-only server-side too; hide it for staff rather
+    // than let them pick a file and hit a 403.
+    importBtn.remove();
+  }
+}
+
+// -----------------------------------------------------
+// CSV export — fetch() so the auth token can be attached; a plain
+// <a href> link wouldn't carry the Authorization header.
+// -----------------------------------------------------
+async function exportCsv() {
+  const token = localStorage.getItem('authToken');
+  try {
+    const res = await fetch(`${API_BASE}/products/export`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error(`Export failed (${res.status})`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `products-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('CSV downloaded');
+  } catch (err) {
+    showToast(`Couldn't export: ${err.message}`);
+  }
+}
+
+// -----------------------------------------------------
+// CSV import — upload the chosen file, then show a summary of what
+// was created/updated, and any per-row errors.
+// -----------------------------------------------------
+async function handleCsvImport(e) {
+  const file = e.target.files[0];
+  e.target.value = ''; // reset so choosing the same file again still fires "change"
+  if (!file) return;
+
+  const token = localStorage.getItem('authToken');
+  const formData = new FormData();
+  formData.append('file', file);
+
+  showToast('Importing CSV...');
+  try {
+    const res = await fetch(`${API_BASE}/products/import`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const body = await res.json();
+    if (!res.ok) throw new Error(body?.error?.message || 'Import failed');
+
+    const { created, updated, errors, totalRows } = body.data;
+    openModal(`
+      <div class="modal-header">
+        <h2>Import complete</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Processed <strong>${totalRows}</strong> row(s): <strong>${created}</strong> created, <strong>${updated}</strong> updated${errors.length ? `, <strong>${errors.length}</strong> skipped` : ''}.</p>
+        ${errors.length ? `
+          <div class="hint" style="margin-bottom:6px;">Rows with errors:</div>
+          <div style="max-height:220px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px;">
+            ${errors.map((e) => `<div style="font-size:12.5px; margin-bottom:6px;"><strong>Row ${e.row}</strong>${e.sku ? ` (${escapeHtml(e.sku)})` : ''}: ${escapeHtml(e.message)}</div>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal()">Done</button>
+      </div>
+    `);
+    loadProducts();
+    loadStats();
+  } catch (err) {
+    showToast(`Import failed: ${err.message}`);
+  }
 }
 
 async function loadFilterOptions() {
@@ -123,9 +210,15 @@ function renderTable(products) {
       <td>${stockBadge(p.quantity_in_stock)}</td>
       <td class="actions-cell">
         <div class="actions-inner">
-          <button class="btn btn-sm" onclick="openStockMovementForm(${p.id}, '${escapeHtml(p.name)}', ${p.quantity_in_stock})">Adjust stock</button>
-          <button class="btn btn-sm" onclick="openProductForm(${p.id})">Edit</button>
-          ${isAdmin() ? `<button class="btn btn-sm btn-danger" onclick="confirmDeleteProduct(${p.id}, '${escapeHtml(p.name)}')">Delete</button>` : ''}
+          <button class="btn-icon" title="Adjust stock" aria-label="Adjust stock" onclick="openStockMovementForm(${p.id}, '${escapeHtml(p.name)}', ${p.quantity_in_stock})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          </button>
+          <button class="btn-icon" title="Edit" aria-label="Edit" onclick="openProductForm(${p.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          ${isAdmin() ? `<button class="btn-icon btn-icon-danger" title="Delete" aria-label="Delete" onclick="confirmDeleteProduct(${p.id}, '${escapeHtml(p.name)}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          </button>` : ''}
         </div>
       </td>
     </tr>
