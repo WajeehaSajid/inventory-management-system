@@ -4,7 +4,7 @@
 // stock-movement update "atomic" later (we can run a transaction
 // on a single client from this pool).
 
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 const { Pool } = require('pg');
 
 // Two ways to configure the connection:

@@ -1,6 +1,8 @@
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const errorHandler = require('./middleware/errorHandler');
 const AppError = require('./middleware/AppError');
@@ -16,6 +18,12 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Interactive API docs — no auth needed to browse the docs themselves,
+// only to actually call the endpoints (use the "Authorize" button with
+// a token from POST /api/auth/login).
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api-docs.json', (req, res) => res.json(swaggerSpec));
+
 // Auth routes are public (you need them to log in in the first place).
 app.use('/api/auth', require('./routes/auth'));
 
@@ -25,6 +33,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/categories', requireAuth, require('./routes/categories'));
 app.use('/api/suppliers', requireAuth, require('./routes/suppliers'));
 app.use('/api/products', requireAuth, require('./routes/products'));
+app.use('/api/dashboard', requireAuth, require('./routes/dashboard'));
 
 // Catch-all for unknown routes -> consistent 404 error format
 app.use((req, res, next) => {
