@@ -7,6 +7,7 @@
     "start": "node server.js",
     "migrate": "psql -d $npm_package_config_dbname -f db/migrations/001_init_schema.sql",
     "seed": "psql -d $npm_package_config_dbname -f db/seed/seed.sql",
+    "test": "jest --runInBand",
     "test:manual": "node test-manual/test-categories.js && node test-manual/test-suppliers.js && node test-manual/test-products.js && node test-manual/test-stock-movements.js"
   },
   "config": {
@@ -18,10 +19,18 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
+    "csv-parse": "^7.0.1",
+    "csv-stringify": "^6.8.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.22.0"
+    "multer": "^2.2.0",
+    "pg": "^8.22.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
