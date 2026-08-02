@@ -1,6 +1,11 @@
 // If already logged in, skip straight to the app.
 if (localStorage.getItem('authToken')) {
-  location.href = 'index.html';
+  location.href = 'dashboard.html';
+}
+
+// Support deep-linking straight to the Sign up tab, e.g. from the welcome page.
+if (new URLSearchParams(location.search).get('tab') === 'signup') {
+  document.addEventListener('DOMContentLoaded', () => switchTab('signup'));
 }
 
 const EYE_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -29,7 +34,7 @@ function showAuthError(message) {
 function onLoginSuccess(data) {
   localStorage.setItem('authToken', data.token);
   localStorage.setItem('authUser', JSON.stringify(data.user));
-  location.href = 'index.html';
+  location.href = 'dashboard.html';
 }
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {

@@ -7,11 +7,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="theme.js?v=3"></script>
 </head>
 <body>
 
 <div class="auth-page">
-  <div class="auth-card">
+  <button class="theme-toggle theme-toggle-floating" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
+  <div class="auth-wrap">
+    <a href="index.html" class="back-home-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Back to home
+    </a>
+    <div class="auth-card">
     <div class="sidebar-brand" style="margin-bottom: 28px;">
       <div class="brand-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
@@ -42,10 +49,6 @@
         </div>
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Log in</button>
-      <p class="auth-hint">
-        Demo accounts — Admin: <code>admin@inventory.com</code> / <code>admin123</code><br>
-        Staff: <code>staff@inventory.com</code> / <code>staff123</code>
-      </p>
     </form>
 
     <!-- Signup form -->
@@ -71,11 +74,12 @@
       <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Create account</button>
     </form>
   </div>
+  </div>
 </div>
 
-<script src="api.js"></script>
-<script src="auth.js"></script>
-<script src="common.js"></script>
-<script src="login.js"></script>
+<script src="api.js?v=3"></script>
+<script src="auth.js?v=3"></script>
+<script src="common.js?v=3"></script>
+<script src="login.js?v=3"></script>
 </body>
 </html>

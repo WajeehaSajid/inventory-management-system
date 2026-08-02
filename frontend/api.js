@@ -6,7 +6,12 @@
 //    returns our { error: { code, message } } shape, so callers
 //    can just try/catch and show err.message to the user.
 
-const API_BASE = 'https://inventory-management-system-omega-livid.vercel.app/api';
+// When running locally (Docker, or a plain http.server) the backend is
+// at localhost:4000. On the deployed site, it's the Vercel URL. This
+// way the same file works in both places with no manual edits.
+const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
+  ? 'http://localhost:4000/api'
+  : 'https://inventory-management-system-omega-livid.vercel.app/api';
 
 async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('authToken');

@@ -12,7 +12,7 @@ function isAdmin() {
 function logout() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('authUser');
-  location.href = 'login.html';
+  location.href = 'index.html';
 }
 
 // Call at the top of every protected page. If there's no token at all,

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Categories · Inventory</title>
+<title>Products · Inventory</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -46,11 +46,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
         Dashboard
       </a>
-      <a href="products.html" class="nav-link">
+      <a href="products.html" class="nav-link active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
         Products
       </a>
-      <a href="categories.html" class="nav-link active">
+      <a href="categories.html" class="nav-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
         Categories
       </a>
@@ -70,19 +70,80 @@
   <main class="main">
     <div class="page-header">
       <div>
-        <h1>Categories</h1>
-        <p class="subtitle">Group your products for easier browsing and filtering</p>
+        <h1>Products</h1>
+        <p class="subtitle">Manage your product catalog and stock levels</p>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary" id="btn-add-category"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add category</button>
+        <button class="btn btn-primary" id="btn-add-product"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add product</button>
+        <button class="btn" id="btn-export-csv" title="Export products to CSV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Export CSV</button>
+        <button class="btn" id="btn-import-csv" title="Import products from CSV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> Import CSV</button>
+        <input type="file" id="csv-file-input" accept=".csv" style="display:none;">
         <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
         <div class="topbar-avatar">U</div>
       </div>
     </div>
 
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-icon tone-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Total products</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon tone-pink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        </div>
+        <div>
+          <div class="stat-value" id="stat-in-stock">—</div>
+          <div class="stat-label">In stock</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon tone-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </div>
+        <div>
+          <div class="stat-value" id="stat-low-stock">—</div>
+          <div class="stat-label">Low stock</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon tone-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+        </div>
+        <div>
+          <div class="stat-value" id="stat-out-of-stock">—</div>
+          <div class="stat-label">Out of stock</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="input search-input" id="search-input" placeholder="Search by name or SKU...">
+      </div>
+      <select class="select" id="filter-category">
+        <option value="">All categories</option>
+      </select>
+      <select class="select" id="filter-supplier">
+        <option value="">All suppliers</option>
+      </select>
+      <select class="select" id="filter-status">
+        <option value="">All stock levels</option>
+        <option value="in_stock">In stock</option>
+        <option value="low_stock">Low stock</option>
+        <option value="out_of_stock">Out of stock</option>
+      </select>
+    </div>
+
     <div class="card">
-      <div id="categories-table-container">
-        <div class="state-block">Loading categories...</div>
+      <div id="products-table-container">
+        <div class="state-block">Loading products...</div>
       </div>
       <div class="pagination" id="pagination-container" style="display:none;"></div>
     </div>
@@ -91,6 +152,6 @@
 
 <script src="api.js?v=3"></script>
 <script src="common.js?v=3"></script>
-<script src="categories.js?v=3"></script>
+<script src="products.js?v=3"></script>
 </body>
 </html>

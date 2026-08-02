@@ -3,139 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Products · Inventory</title>
+<title>Inventory · Simple stock management</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<script src="auth.js"></script>
-<script>requireAuth();</script>
+<script src="theme.js?v=3"></script>
+<script>
+  // Already signed in? skip the landing page and go straight to the app.
+  if (localStorage.getItem('authToken')) {
+    location.href = 'dashboard.html';
+  }
+</script>
 </head>
 <body>
 
-<div id="splash">
-  <div class="splash-inner">
-    <div class="splash-icon">
+<!-- ===================== Nav ===================== -->
+<header class="landing-nav">
+  <div class="sidebar-brand" style="margin: 0;">
+    <div class="brand-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
     </div>
-    <div class="splash-word"><span class="w-inventory">Inventory</span><span class="w-system">System</span></div>
-    <div class="splash-tag">Product · Stock · Suppliers</div>
+    <span class="brand-name" style="color: var(--text); font-size: 19px;">Inventory</span>
   </div>
-</div>
 
-<div class="app-shell">
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-      </div>
-      <span class="brand-name">Inventory</span>
+  <div class="landing-nav-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
+    <a href="login.html" class="btn">Log in</a>
+    <a href="login.html?tab=signup" class="btn btn-primary">Sign up</a>
+  </div>
+</header>
+
+<!-- ===================== Hero ===================== -->
+<section class="landing-hero">
+  <div class="hero-copy">
+    <div class="hero-eyebrow">Simple inventory management</div>
+    <h1 class="hero-title">Track your stock<br>the <span class="accent">simple</span> way</h1>
+    <p class="hero-subtitle">
+      Products, categories, suppliers and stock movements — organized in one clean
+      dashboard. No clutter, no learning curve, just the tools you actually need.
+    </p>
+    <div class="hero-cta">
+      <a href="login.html?tab=signup" class="btn btn-primary hero-btn">Get started</a>
     </div>
+  </div>
 
-    <div class="sidebar-profile">
-      <div class="avatar">U</div>
-      <div class="who">
-        <div class="name">User</div>
-        <div class="role">Tap to rename</div>
+  <div class="hero-visual">
+    <div class="mock-window">
+      <div class="mock-window-bar">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="mock-window-body">
+        <div class="mock-stats">
+          <div class="mock-stat">
+            <div class="mock-stat-icon mock-icon-brand">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            </div>
+            <div><strong>248</strong><span>Total products</span></div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-icon mock-icon-warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+            </div>
+            <div><strong>12</strong><span>Low stock</span></div>
+          </div>
+        </div>
+        <div class="mock-chart">
+          <div class="mock-bar" style="height:38%"></div>
+          <div class="mock-bar" style="height:62%"></div>
+          <div class="mock-bar" style="height:45%"></div>
+          <div class="mock-bar" style="height:80%"></div>
+          <div class="mock-bar" style="height:55%"></div>
+          <div class="mock-bar" style="height:70%"></div>
+          <div class="mock-bar" style="height:50%"></div>
+        </div>
+        <div class="mock-row"></div>
+        <div class="mock-row"></div>
+        <div class="mock-row" style="width: 65%;"></div>
       </div>
     </div>
+  </div>
+</section>
 
-    <p class="nav-section-label">Menu</p>
-    <nav class="nav-list">
-      <a href="index.html" class="nav-link active">
+<!-- ===================== Features ===================== -->
+<section class="landing-features">
+  <h2 class="landing-section-title">Everything you need, nothing you don't</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-        Products
-      </a>
-      <a href="categories.html" class="nav-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-        Categories
-      </a>
-      <a href="suppliers.html" class="nav-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-        Suppliers
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">Product Inventory · v1.0</div>
-  </aside>
-
-  <main class="main">
-    <div class="page-header">
-      <div>
-        <h1>Products</h1>
-        <p class="subtitle">Manage your product catalog and stock levels</p>
       </div>
-      <div class="header-actions">
-        <button class="btn btn-primary" id="btn-add-product"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add product</button>
-        <div class="topbar-avatar">U</div>
-      </div>
+      <h3>Product catalog</h3>
+      <p>Add products with SKUs, categories, suppliers and pricing — search and filter through your whole catalog in seconds.</p>
     </div>
 
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-icon tone-primary">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-total">—</div>
-          <div class="stat-label">Total products</div>
-        </div>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon tone-pink">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-in-stock">—</div>
-          <div class="stat-label">In stock</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon tone-warning">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-low-stock">—</div>
-          <div class="stat-label">Low stock</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon tone-danger">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-out-of-stock">—</div>
-          <div class="stat-label">Out of stock</div>
-        </div>
-      </div>
+      <h3>Stock movements</h3>
+      <p>Log every stock in and stock out with a reason, and always know exactly what's running low before it's a problem.</p>
     </div>
 
-    <div class="toolbar">
-      <input type="text" class="input search-input" id="search-input" placeholder="Search by name or SKU...">
-      <select class="select" id="filter-category">
-        <option value="">All categories</option>
-      </select>
-      <select class="select" id="filter-supplier">
-        <option value="">All suppliers</option>
-      </select>
-      <select class="select" id="filter-status">
-        <option value="">All stock levels</option>
-        <option value="in_stock">In stock</option>
-        <option value="low_stock">Low stock</option>
-        <option value="out_of_stock">Out of stock</option>
-      </select>
-    </div>
-
-    <div class="card">
-      <div id="products-table-container">
-        <div class="state-block">Loading products...</div>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
       </div>
-      <div class="pagination" id="pagination-container" style="display:none;"></div>
+      <h3>Team roles</h3>
+      <p>Give admins full control while staff can manage day-to-day stock — everyone sees exactly what they need to.</p>
     </div>
-  </main>
-</div>
 
-<script src="api.js"></script>
-<script src="common.js"></script>
-<script src="products.js"></script>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      </div>
+      <h3>Live dashboard</h3>
+      <p>See stock value, low-stock alerts and movement trends at a glance, updated the moment something changes.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="landing-footer">
+  <p>Inventory · Built for simple, everyday stock management</p>
+</footer>
+
 </body>
 </html>
