@@ -48,11 +48,26 @@ INSERT INTO products (name, sku, description, unit_price, quantity_in_stock, cat
 
 -- =====================================================
 -- SAMPLE STOCK MOVEMENTS (a few, to show history works)
+--
+-- BUG FIX (see NOTES.md): created_at was left to its DEFAULT NOW(),
+-- so every row got the exact timestamp of whenever this seed script
+-- happened to run. Weeks later, all rows fall outside the dashboard's
+-- 7/30-day trend window, so /api/dashboard/stock-trend returns 0 for
+-- every day and the chart renders as a flat line at 0.
+--
+-- Fix: give each row an explicit created_at spread across the last
+-- ~14 days (relative to whenever the seed is run), so the trend chart
+-- always has real data to plot, both on first seed and on re-seeds.
 -- =====================================================
-INSERT INTO stock_movements (product_id, type, quantity, reason) VALUES
-(1, 'IN', 50, 'Initial stock received'),
-(1, 'OUT', 5, 'Sold to customer'),
-(3, 'IN', 10, 'Initial stock received'),
-(3, 'OUT', 2, 'Sold to customer'),
-(5, 'IN', 10, 'Initial stock received'),
-(5, 'OUT', 10, 'Sold out - clearance');
+INSERT INTO stock_movements (product_id, type, quantity, reason, created_at) VALUES
+(1, 'IN', 50, 'Initial stock received', NOW() - INTERVAL '14 days'),
+(1, 'OUT', 5, 'Sold to customer', NOW() - INTERVAL '12 days'),
+(3, 'IN', 10, 'Initial stock received', NOW() - INTERVAL '10 days'),
+(3, 'OUT', 2, 'Sold to customer', NOW() - INTERVAL '8 days'),
+(5, 'IN', 10, 'Initial stock received', NOW() - INTERVAL '6 days'),
+(5, 'OUT', 10, 'Sold out - clearance', NOW() - INTERVAL '5 days'),
+(2, 'IN', 20, 'Restocked from supplier', NOW() - INTERVAL '4 days'),
+(7, 'OUT', 15, 'Bulk order fulfilled', NOW() - INTERVAL '3 days'),
+(9, 'IN', 30, 'Weekly restock', NOW() - INTERVAL '2 days'),
+(4, 'OUT', 6, 'Sold to customer', NOW() - INTERVAL '1 day'),
+(6, 'IN', 25, 'Restocked from supplier', NOW());
